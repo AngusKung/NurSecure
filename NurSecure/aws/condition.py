@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Any, Dict, List, Set
 
 logger = logging.getLogger('Condition')
 logger.setLevel(logging.INFO)
@@ -8,15 +8,15 @@ logger.setLevel(logging.INFO)
 class Condition():
     SCORE_THRESHOLD = 0.5
 
-    def __init__(self, entities: List[Dict]):
+    def __init__(self, entities: List[Dict[str, Any]]):
         self.__entities = entities
         self.__organs = None
         self.__symptoms = None
 
     def __parse(self):
         # Doc: https://docs.aws.amazon.com/comprehend/latest/dg/API_hera_Entity.html
-        self.__organs = []
-        self.__symptoms = []
+        self.__organs = set()
+        self.__symptoms = set()
 
         for entity in self.__entities:
             if not self.__is_trustable(entity):
@@ -24,24 +24,26 @@ class Condition():
                 continue
 
             if 'Type' in entity and entity['Type'] == 'SYSTEM_ORGAN_SITE':
-                self.__organs.append(entity['Text'])
+                self.__organs.add(entity['Text'])
 
             if 'Traits' in entity:
                 for trait in entity['Traits']:
-                    if self.__is_trustable(trait):
-                        self.__symptoms.append(trait['Name'])
+                    if not self.__is_trustable(trait):
+                        continue
+                    if 'Name' in trait and trait['Name'] == 'SYMPTOM':
+                        self.__symptoms.add(entity['Text'])
 
     def __is_trustable(self, entity: Dict):
         return 'Score' not in entity or entity['Score'] > self.SCORE_THRESHOLD
 
     @property
-    def organs(self):
-        if not self.__organs:
+    def organs(self) -> Set[str]:
+        if self.__organs is None:
             self.__parse()
         return self.__organs
 
     @property
-    def symptoms(self):
-        if not self.__symptoms:
+    def symptoms(self) -> Set[str]:
+        if self.__symptoms is None:
             self.__parse()
         return self.__symptoms
