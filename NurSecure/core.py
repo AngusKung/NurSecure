@@ -33,7 +33,7 @@ class NurSecure:
         med_condition = self.comprehend.query(user_input)
         paired_condition = tuple(med_condition.organs.union(med_condition.symptoms))
         if len(paired_condition) > 0:
-            med_response = f'\n\t\t - Detected medical conditions: {paired_condition})'
+            med_response = f'\n\t\t - Detected medical conditions: '+ ' '.join(paired_condition)
             self.med_conditions.append(paired_condition)
         else:
             med_response = f'\n\t\t - No medical condition detected'
@@ -67,18 +67,21 @@ class NurSecure:
     def __final_statement(self, chat_response):
         if len(self.med_conditions) > 0:
             specialty_recommed = self.__get_specialty()
-            med_response = f'\n\t\tAll medical conditions: {self.med_conditions}'
             self.reset()
-            return chat_response + specialty_recommed + med_response
+            return chat_response + specialty_recommed
         else:
             return 'No medical conditions detected during chat. Please give more information about your discomfort.'
 
     def __get_specialty(self):
-        total_specialty = []
+        all_specialty = []
+        all_symptom = []
         for tup in self.med_conditions:
             for elem in tup:
                 if elem in self.symptom_specialty_dict:
-                    total_specialty.append(self.symptom_specialty_dict[elem])
+                    all_specialty.append(self.symptom_specialty_dict[elem])
+                    all_symptom.append(elem)
 
-        specialty = Counter(total_specialty).most_common(1)[0][0]
-        return f' to go for {specialty}'
+        recommendations = [f'\t\t{idx+1}. "{specialty}" due to "{all_symptom[idx]}"' for idx, specialty in enumerate(all_specialty)]
+        # TODO: Order by count, more appearance goes first
+        
+        return f' to go for:\n' + '\n'.join(recommendations)
