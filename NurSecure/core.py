@@ -1,12 +1,14 @@
 import logging
+from collections import Counter
 
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer, UbuntuCorpusTrainer
 
+from NurSecure.specialty import SPECIALTIES
 from .aws.comprehend import Comprehend
 
 logger = logging.getLogger('NurSecure')
-
+import pdb
 
 class NurSecure:
     '''
@@ -15,22 +17,9 @@ class NurSecure:
 
     def __init__(self):
         self.chatbot = ChatBot('NurSecure')  # ChatterBot class
-        self.history = []
+        self.med_conditions = []
         self.comprehend = Comprehend()
-
-    def __train_english_corpus(self):
-        logger.info('Training English dialogue...')
-        trainer = ChatterBotCorpusTrainer(self.chatbot)
-        trainer.train('chatterbot.corpus.english')
-
-    def __train_ubuntu_corpus(self):
-        trainer = UbuntuCorpusTrainer(self.chatbot)
-        trainer.train()
-
-    def __train_custom_medical_corpus(self):
-        logger.info('Training custom medical dialogues')
-        trainer = ChatterBotCorpusTrainer(self.chatbot)
-        trainer.train('data.medical')
+        self.symptom_specialty_dict = {symptom: key for key, symptom_list in SPECIALTIES.items() for symptom in symptom_list}
 
     def train(self, use_ubuntu_corpus=False):
         self.__train_english_corpus()
@@ -41,14 +30,46 @@ class NurSecure:
 
     def get_response(self, user_input: str):
         chat_response = str(self.chatbot.get_response(user_input))
-        self.history.append(user_input)
+        med_condition = self.comprehend.query(user_input)
+        paired_condition = tuple(med_condition.organs.union(med_condition.symptoms))
+        if len(paired_condition) > 0:
+            med_response = f'\n\t\t - Detected medical conditions: {paired_condition})'
+            self.med_conditions.append(paired_condition)
+        else:
+            med_response = f'\n\t\t - No medical condition detected'
 
         if 'NurSecure Recommends' in chat_response:  # Final state
-            med_condition = self.comprehend.query('. '.join(self.history))
-            paired_condition = tuple(
-                med_condition.organs.union(med_condition.symptoms))
-            if paired_condition:
-                med_response = f':\n\t\tDetected conditions: {paired_condition}'
-                return chat_response + med_response
-            return 'No medical issues detected.'
-        return chat_response
+            return self.__final_statement(chat_response)
+        return chat_response + med_response
+
+    def __train_english_corpus(self):
+            logger.info('Training English dialogue...')
+            trainer = ChatterBotCorpusTrainer(self.chatbot)
+            trainer.train('chatterbot.corpus.english')
+
+    def __train_ubuntu_corpus(self):
+        trainer = UbuntuCorpusTrainer(self.chatbot)
+        trainer.train()
+
+    def __train_custom_medical_corpus(self):
+        logger.info('Training custom medical dialogues')
+        trainer = ChatterBotCorpusTrainer(self.chatbot)
+        trainer.train('data.medical')
+
+    def __final_statement(self, chat_response):
+        if len(self.med_conditions) > 0:
+            specialty_recommed = self.__get_specialty()
+            med_response = f'\n\t\tAll medical conditions: {self.med_conditions}'
+            return chat_response + specialty_recommed + med_response
+        else:
+            return 'No medical conditions detected during chat. Please give more information about your discomfort.'
+
+    def __get_specialty(self):
+        total_specialty = []
+        for tup in self.med_conditions:
+            for elem in tup:
+                if elem in self.symptom_specialty_dict:
+                    total_specialty.append(self.symptom_specialty_dict[elem])
+
+        specialty = Counter(total_specialty).most_common(1)[0][0]
+        return f' to go for {specialty}'
