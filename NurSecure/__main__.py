@@ -25,4 +25,7 @@ if __name__ == '__main__':
         print(f'Human:\t\t{sent}')
         print(f'NurSecure:\t{nursecure.get_response(sent)}')
 
-    pdb.set_trace()
+    print(f'\nStart your own chat here:')
+    while True:
+        user_input = input(f'You:\t\t')
+        print(f'NurSecure:\t{nursecure.get_response(user_input)}')

@@ -42,10 +42,18 @@ class NurSecure:
             return self.__final_statement(chat_response)
         return chat_response + med_response
 
+    def reset(self):
+        self.med_conditions = []
+
     def __train_english_corpus(self):
             logger.info('Training English dialogue...')
             trainer = ChatterBotCorpusTrainer(self.chatbot)
-            trainer.train('chatterbot.corpus.english')
+            trainer.train('chatterbot.corpus.english.greetings',
+                          'chatterbot.corpus.english.conversations',
+                          'chatterbot.corpus.english.health',
+                          'chatterbot.corpus.english.humor',
+                          'chatterbot.corpus.english.ai',
+                          )
 
     def __train_ubuntu_corpus(self):
         trainer = UbuntuCorpusTrainer(self.chatbot)
@@ -54,12 +62,13 @@ class NurSecure:
     def __train_custom_medical_corpus(self):
         logger.info('Training custom medical dialogues')
         trainer = ChatterBotCorpusTrainer(self.chatbot)
-        trainer.train('data.medical')
+        trainer.train('data.medical', 'data.state')
 
     def __final_statement(self, chat_response):
         if len(self.med_conditions) > 0:
             specialty_recommed = self.__get_specialty()
             med_response = f'\n\t\tAll medical conditions: {self.med_conditions}'
+            self.reset()
             return chat_response + specialty_recommed + med_response
         else:
             return 'No medical conditions detected during chat. Please give more information about your discomfort.'
