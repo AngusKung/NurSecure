@@ -33,6 +33,15 @@ aws configure --profile nursecure
 # Default output format [None]: json
 ```
 
+#### IAM settings
+```json
+{
+    "Effect": "Allow",
+    "Action": "comprehendmedical:*",
+    "Resource": "*"
+}
+```
+
 ## Usage
 
 ```
