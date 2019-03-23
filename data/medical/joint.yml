@@ -3,7 +3,7 @@ categories:
 conversations:
 - - I've been having some pain in my joints.
   - Which part you're referring to?
-- - I've been having some pain in my joints, especially the knees.
+  - Pain in the knees.
   - How long have you been having the pain?
   - Four months ago and getting worse recently
   - Are you having any other problems like weakness, fatigue or headaches?
@@ -16,4 +16,4 @@ conversations:
   - Ouch
   - It seems you have some inflammation in your right knees. However, there's nothing broken.
   - Should I see a doctor for a thorough check?
-  - I'd recommend you make an appointment to __FIXME__.
+  - NurSecure Recommends

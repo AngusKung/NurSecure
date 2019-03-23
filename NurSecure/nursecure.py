@@ -13,7 +13,7 @@ class NurSecure:
 
 	def __init__(self):
 		self.chatbot = ChatBot('NurSecure') # ChatterBot class
-		self.med_conditions = set()
+		self.history = []
 
 	def train(self, use_ubuntu_corpus=False):
 		self._train_english_corpus()
@@ -38,15 +38,15 @@ class NurSecure:
 
 	def get_response(self, string):
 		chat_response = str(self.chatbot.get_response(string))
+		self.history.append(string)
 
-		med_condition = Comprehend().query(string)
-		paired_condition = tuple(med_condition.organs.union(med_condition.symptoms))
-		if len(paired_condition) > 0:
-			self.med_conditions.add(paired_condition)
-
-		if len(self.med_conditions) > 0:
-			med_response = "\n\t\t\tDetected conditions: "+str(self.med_conditions)
-			return chat_response + med_response
+		if 'NurSecure Recommends' in chat_response: # Final state
+			med_condition = Comprehend().query('. '.join(self.history))
+			paired_condition = tuple(med_condition.organs.union(med_condition.symptoms))
+			if len(paired_condition) > 0:
+				med_response = ":\n\t\tDetected conditions: " + str(paired_condition)
+				return chat_response + med_response
+			else:
+				return "No medical issues detected."
 		else:
 			return chat_response
-
