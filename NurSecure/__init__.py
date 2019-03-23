@@ -1,6 +1,4 @@
-"""
-NurSecure is a chatbot for health-care consultancy under total privacy.
-"""
+'''NurSecure is a chatbot for health-care consultancy under total privacy.'''
 
 __version__ = '0.1.0'
 __author__ = ['AngusYCKung', 'Yi-Lin Juang']
