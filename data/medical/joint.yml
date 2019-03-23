@@ -1,0 +1,19 @@
+categories:
+- joint
+conversations:
+- - I've been having some pain in my joints.
+  - Which part you're referring to?
+- - I've been having some pain in my joints, especially the knees.
+  - How long have you been having the pain?
+  - Four months ago and getting worse recently
+  - Are you having any other problems like weakness, fatigue or headaches?
+  - Well I've certainly felt under the weather
+  - Right. How much physical activity do you get? Do you play any sports?
+  - Some. I like to play tennis about once a week. I take my dog on a walk every morning
+  - OK. Let's have a look. Can you type the area where you are having pain?
+  - My right knee hurts
+  - Let's have a quick test. Please stand up and put weight on your right knees. Does it hurt?
+  - Ouch
+  - It seems you have some inflammation in your right knees. However, there's nothing broken.
+  - Should I see a doctor for a thorough check?
+  - I'd recommend you make an appointment to __FIXME__.
