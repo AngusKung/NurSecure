@@ -1,7 +1,9 @@
 ![NurSecure](https://imgur.com/3RoCeZT.png)
 
 # NurSecure
-NurSecure is a machine-learning powered chatbot that analyzes descriptions, classifies syndrome and points you directly to the specialist.
+NurSecure is a machine-learning powered chatbot that analyzes descriptions, classifies syndrome and points you directly to the specialist.  
+
+__Work in progress!!!__
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 
