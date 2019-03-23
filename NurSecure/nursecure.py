@@ -13,14 +13,14 @@ class NurSecure:
 
 	def __init__(self):
 		self.chatbot = ChatBot('NurSecure') # ChatterBot class
-		self.conditions = set()
+		self.med_conditions = set()
 
 	def train(self, use_ubuntu_corpus=False):
 		self._train_english_corpus()
 		if use_ubuntu_corpus:
 			self._train_ubuntu_corpus()
 
-		self._train_medical_dialogues()
+		self._train_custom_medical_corpus()
 
 	def _train_english_corpus(self):
 		logger.info("Training English dialogue...")
@@ -31,16 +31,22 @@ class NurSecure:
 		trainer = UbuntuCorpusTrainer(self.chatbot)
 		trainer.train()
 
-	def _train_medical_dialogues(self):
+	def _train_custom_medical_corpus(self):
 		logger.info("Training custom medical dialogues")
 		trainer = ChatterBotCorpusTrainer(self.chatbot)
 		trainer.train("data.medical")
 
 	def get_response(self, string):
-		chat_response = self.chatbot.get_response(string)
-		med_condition = Comprehend().query(string)
-		# FIXME: How to get conditions? (*** AttributeError: 'Condition' object has no attribute '__entities')
+		chat_response = str(self.chatbot.get_response(string))
 
-		# TODO: Parse med_condition into class state, output at last recommendation
-		return chat_response
+		med_condition = Comprehend().query(string)
+		paired_condition = tuple(med_condition.organs.union(med_condition.symptoms))
+		if len(paired_condition) > 0:
+			self.med_conditions.add(paired_condition)
+
+		if len(self.med_conditions) > 0:
+			med_response = "\n\t\t\tDetected conditions: "+str(self.med_conditions)
+			return chat_response + med_response
+		else:
+			return chat_response
 
