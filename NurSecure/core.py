@@ -83,5 +83,5 @@ class NurSecure:
 
         recommendations = [f'\t\t{idx+1}. "{specialty}" due to "{all_symptom[idx]}"' for idx, specialty in enumerate(all_specialty)]
         # TODO: Order by count, more appearance goes first
-        
+
         return f' to go for:\n' + '\n'.join(recommendations)

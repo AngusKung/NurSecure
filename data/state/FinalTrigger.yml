@@ -9,7 +9,7 @@ conversations:
   - NurSecure Recommends
 - - Any recommendation?
   - NurSecure Recommends
-- - So next step for me?
+- - So what's the next step for me?
   - NurSecure Recommends
 - - What should I do next?
   - NurSecure Recommends
@@ -18,4 +18,8 @@ conversations:
 - - How should I solve this?
   - NurSecure Recommends
 - - What else can I do to solve this?
+  - NurSecure Recommends
+- - Where should I go?
+  - NurSecure Recommends
+- - Cool, then where should I go for a check?
   - NurSecure Recommends

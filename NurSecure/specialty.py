@@ -44,9 +44,6 @@ SPECIALTIES = {
     'Neurology': [
         'bones',
         'brain',
-        'heart',
-        'kidneys',
-        'lungs',
         'skin',
         'spinal',
     ],
@@ -56,7 +53,6 @@ SPECIALTIES = {
     ],
     'Orthopedics': [
         'bones',
-        'joints',
         'ligaments',
         'muscles',
         'nerves',
